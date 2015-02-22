@@ -1,0 +1,4 @@
+module FlowlessPrivate {
+    header "../Flowless-Bridging-Header.h"
+    export *
+}

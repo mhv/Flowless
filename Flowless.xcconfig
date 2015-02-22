@@ -1,0 +1,2 @@
+SWIFT_INCLUDE_PATHS = $(SRCROOT)/Flowless
+MODULEMAP_PRIVATE_FILE = $(SRCROOT)/Flowless/Flowless.private.modulemap
