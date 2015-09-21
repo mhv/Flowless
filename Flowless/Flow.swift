@@ -24,11 +24,8 @@ class Sink<T> {
 public class Flow<T> {
     var next = Sink<T>()
     var done = Sink<NSError?>()
-    public func input() -> T-> () {
-        return {x in self.put(x)}
-    }
     public func put(x: T) {
-        for (_,a) in next.actions {a(x)}
+        next.put(x)
     }
     public func add(o:(T-> ())) -> Flow {
         next.addOutput(o)
@@ -89,7 +86,7 @@ public class Flow<T> {
     public class func flatten(ins:[Flow]) -> Flow {
         return Flow {flow in
             for f in ins {
-                flow.addInput(f, put:flow.input())
+                flow.addInput(f, put:flow.put)
             }
         }
     }
@@ -117,14 +114,14 @@ public class Flow<T> {
 
     public func then() -> Flow<NSError?> {
         return Flow<NSError?> {flow in
-            flow.addSink(self.done, put: flow.input())
+            flow.addSink(self.done, put: flow.put)
         }
     }
 
     public func dispatch(q:dispatch_queue_t) -> Flow {
         return Flow { flow in
             flow.addInput(self, put: { x in
-                dispatch_async(q) {flow.input()(x)}
+                dispatch_async(q) {flow.put(x)}
             })
         }
     }
@@ -132,7 +129,7 @@ public class Flow<T> {
     public func operation(q:NSOperationQueue) -> Flow {
         return Flow { flow in
             flow.addInput(self, put: { x in
-                q.addOperationWithBlock {flow.input()(x)}
+                q.addOperationWithBlock {flow.put(x)}
             })
         }
     }
