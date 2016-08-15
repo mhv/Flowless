@@ -7,18 +7,20 @@
 //
 
 import UIKit
+import Beholder
+import Utils
 
 extension Flow {
-    public class func source(source:UIControl, events:UIControlEvents) -> Flow<UIControl> {
+    public class func source(_ source:UIControl, events:UIControlEvents) -> Flow<UIControl> {
         return Flow<UIControl> { flow in
             weak var o = source.observeEvents(events) {flow.put($0)}
-            flow.done.addOutput {_ in o?.cancel()}
+            _ = flow.done.addAction {_ in o?.finish()}
         }
     }
-    public class func sourceSender(source:UIGestureRecognizer) -> Flow<UIGestureRecognizer> {
+    public class func sourceSender(_ source:UIGestureRecognizer) -> Flow<UIGestureRecognizer> {
         return Flow<UIGestureRecognizer> { flow in
             weak var o = source.observeSender {flow.put($0)}
-            flow.done.addOutput {_ in o?.cancel()}
+            _ = flow.done.addAction {_ in o?.finish()}
         }
     }
 }
